@@ -1,0 +1,5 @@
+OCF - Open Combat Flow
+PWG - Perlin World Gen
+DF - Django Forums
+CDG - C++ Dungeon Generator
+PWS - Personal Website
