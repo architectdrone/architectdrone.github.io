@@ -15,6 +15,13 @@ p.description
     font-size: small;
 }
 
+p.bannerText
+{
+    font-style: italic;
+    font-size: small;
+    text-align: center;
+}
+
 h1.banner
 {
     font-size: xx-large;
