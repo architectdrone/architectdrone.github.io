@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <title>Character Class</title>
+        <link href="../main.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+    <div>
+        <h1>
+            Character Class
+        </h1>
+        <p class="information">Information about the Character class.</p>
+
+        <h2>Member Attributes</h2>
+        <ul>
+        <li><b>HP</b>: Hit Points. When this number reaches 0, the character is dead.</li>
+        <li><b>effects</b>: A dictionary of effects. We start with no effects.</li>
+        <li><b>position</b>: The coordinates of the character. If you don't plan on using a coordinate system, this can be safely ignored.</li>
+        <li><b>groups</b>: Groups of characters. These are specifed as strings. EX: "Enemies", "Undead", etc.</li>
+        <li><b>name</b>: The name of the character. This can also be safely ignored, and is only added for your convience.</li>
+        </ul>
+        <h2>Member Methods</h2>
+
+        <h3>getActionBlock</h3>
+        <p><b>Description: </b>Returns a selected inter-personal action. If the chosen action is not interpersonal, a blank dict will be returned.</p>
+        <p><b>Note: </b>This is a placeholder, and should be implemented in a derived class.</p>
+        <p><b>Returns: </b>The action that the character will use.</p>
+        <p><b>Raise: </b>NotImplementedError If not implemented.</p>
+        <br>
+
+        <h3>getReactionBlock</h3>
+        <p><b>Description: </b>Returns a selected reaction. If the chosen action is not interpersonal, a blank dict will be returned.</p>
+        <p><b>Note: </b>This is a placeholder, and should be implemented in a derived class.</p>
+        <p><b>Returns: </b>The reaction to be used.</p>
+        <p><b>Raise: </b>NotImplementedError If not implemented.</p>
+        <br>
+
+        <h3>preTurn</h3>
+        <p><b>Description: </b>This method is called before _update. It doesn't need to be implemented, but it might help with things like status effects.</p>
+        <br>
+
+        <h3>postTurn</h3>
+        <p><b>Description: </b>This method is called at the very end of the turn. It doesn't need to be implemented.</p>
+        <br>
+
+        <h3>setPosition</h3>
+        <p><b>Description: </b>Sets the position. Specify however many coordinates you need, up to 3.</p>
+        <p><b>Postcondition: </b>The position member variable is altered to refled the change.</p>
+        <b>Parameters: </b>
+        <ul>
+            <li><u>x:</u> The new X coordinate </li>
+            <li><u>y:</u> The new Y coordinate </li>
+            <li><u>z:</u> The new Z coordinate </li>
+        </ul>
+        <br>
+
+        <h3>isDead</h3>
+        <p><b>Description: </b>Returns Whether or not the character is dead.</p>
+        <p><b>Returns: </b>true if HP &lt = 0, False otherwise.</p>
+
+    </div>
+    </body>
+</html>
