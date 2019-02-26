@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <title>combatHandler Class</title>
+        <link href="../main.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+    <div>
+        <h1>
+            combatHandler Class
+        </h1>
+        <p class="information">Information about the combatHandler class. This class is responsible for handling interactions between characters.</p>
+
+        <h2>Member Attributes</h2>
+        <ul>
+        <li><b>alive</b>: Characters, in combat, who have not yet died.</li>
+        <li><b>dead</b>: Characters, in combat, (meaning those who have not yet despawned, and may still be looted), who have died.</li>
+        <li><b>log</b>: A list of log messages.</li>
+        </ul>
+        <h2>Member Methods</h2>
+
+        <h3>turn</h3>
+        <p><b>Description: </b>Executes the turn of the current character.</p>
+        <p><b>Postcondition: </b>The turn of the current character is completed, and moves to the next character.</p>
+        <p><b>Raise: </b>Exception If no characters are alive.</p>
+        <br>
+
+        <h3>getAllInRange</h3>
+        <p><b>Description: </b>Gets all characters in given range</p>
+        <p><b>Returns: </b>All characters in the range. None if there are none in that range.</p>
+        <b>Parameters: </b>
+        <ul>
+            <li><u>range:</u> A rangeBlock specifying the valid range. </li>
+        </ul>
+        <br>
+
+        <h3>getRandomCharacterInRange</h3>
+        <p><b>Description: </b>Gets a random character in the specified range.</p>
+        <p><b>Returns: </b>A random character in the range. None if there are none in that range.</p>
+        <b>Parameters: </b>
+        <ul>
+            <li><u>range:</u> A rangeBlock specifying the valid range. </li>
+        </ul>
+        <br>
+
+        <h3>addCharacter</h3>
+        <p><b>Description: </b>Adds a character to those alive.</p>
+        <p><b>Postcondition: </b>The character has been added.</p>
+        <b>Parameters: </b>
+        <ul>
+            <li><u>character:</u> The character to add. </li>
+        </ul>
+        <br>
+
+        <h3>addLogMessage</h3>
+        <p><b>Description: </b>Adds a message to the log.</p>
+        <p><b>Postcondition: </b>The message has been added.</p>
+        <b>Parameters: </b>
+        <ul>
+            <li><u>message:</u> The message to add. </li>
+        </ul>
+        <br>
+
+        <h3>getLog</h3>
+        <p><b>Description: </b>Gets the log. It is a list full of logBlock dictionaries.</p>
+        <p><b>Returns: </b>A list of messages</p>
+        <b>Parameters: </b>
+        <ul>
+            <li><u>max_messages:</u> The maximum number of messages to return. </li>
+        </ul>
+        <br>
+
+        <h3>flushLog</h3>
+        <p><b>Description: </b>Removes all entries currently in the log.</p>
+        <p><b>Postcondition: </b>No messages remain in the log.</p>
+    </div>
+    </body>
+</html>
