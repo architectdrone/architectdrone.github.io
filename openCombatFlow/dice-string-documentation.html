@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <title>Dice String Documentation</title>
+        <link href="../main.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div>
+        <h1>Dice Strings</h1>
+        <p class="information">This document will explain how dice strings work in OCF. Dice Strings are conveinent ways to represent chance.</p>
+
+        <h2>Constants</h2>
+        Adding constants to a dice string is simple. Simply type the constant.<br>
+        <b>Example</b>: "9" evaluates to 9.<br>
+
+        <h2>Dice</h2>
+        Dice are specified using the common RPG specifying system. The format is &ltnumber_of_dice_to_roll&gtd&ltsides_of_dice&gt<br>
+        <b>Example</b>: "3d6" means "roll three six-sided dice and sum the values"<br>
+
+        <h2>Operations</h2>
+        The only supported operations are "+" and "-". Any number of dice and constants can be chained in this way.<br>
+        <b>Example</b>: "3d6+5" <br>
+
+        <h2>Comparisons</h2>
+        Use comparisons to specify a fail/win state. The following comparisons are accepted: "&lt", "&gt", and "=". The results of a fail/win state depend on the circumstance. <br>
+        <b>Example</b>: "3d6+5>9" Means that a certain condition should be executed if the sum of three dice rolls of a six-sided die and 5 is greater than 9.<br>
+        </div>
+    </body>
+</html>
