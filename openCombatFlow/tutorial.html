@@ -12,13 +12,311 @@
         <p>For this tutorial, I will be making a simple adventure game. The player takes the role of the intrepid Captain Limelight. Captain Limelight must use his lazer blaster to keep away the aliens, who are trying to kill him.</p>
         
         <h2>Setting Up...</h2>
-        <p>Before beginning this tutorial, put the OCF directory in a place that Python will know where to look. I put mine in the directory that I was creating this tutorial's file in, just so that if anyone wants to look at what I did, they can run the code without installing the OCF dependencies.</p>
-    
-        <h2>Creating the game file</h2>
-        <p>Create a new python file in the directory that you want your game. You can call yours whatever you'd like, I am going to call mine "limelight.py"</p>
+        <p>Before starting, you will, of course, want to make sure that OpenCombatFlow is installed. If you haven't already, run this from the command line:</p>
         <div class="code">
         <pre>
-        import character as c
+        pip install opencombatflow
+        </pre>
+        </div>
+
+        <h2>Creating the game file</h2>
+        <p>Create a new python file in the directory that you want your game. You can call yours whatever you'd like. I am going to call mine "limelight.py".</p>
+        <p>Next, you'll want to import the character module from opencombatflow. This will give you access to the Character class, and the combat handler.</p>
+        <div class="code">
+        <pre>
+        from opencombatflow import character as c
+        </pre>
+        </div>
+
+        <h2>Your first character</h2>
+        <p>The time has come to create your first character! Yay! We start on the line following our import...</p>
+        <div class="code">
+        <pre>
+        class hero(c.Character):
+            name = "Limelight"
+            HP = 30
+            groups = ['good']
+        </pre>
+        </div>
+        <p>To create the "hero" character, we extend the class Character from the module character. This new class can be called whatever you like.</p>
+        <p>"name", "groups", and "HP" are built in attributes of the Character class that do specific things. HP is the amount of life the character has, name is the character's name, and groups is a list of groups that the character is a part of. (This will make targetting easier).</p>
+        <p>You might notice that we haven't yet defined a lot for the hero to do. We must create two new methods for all characters: getActionBlock and getReactionBlock. These allow the combat handler to automatically handle events</p>
+        <div class="code">
+        <pre>
+        class hero(c.Character):
+            name = "Limelight"
+            HP = 30
+            groups = ['good']
+        
+            def getActionBlock(self):
+                return {}
+            
+            def getReactionBlock(self, action):
+                return {}
+        </pre>
+        </div>
+        <p>Notice that we are returning empty dictionaries. OCF uses a system of structured dictionaries to pass information between itself and the user. There are multiple types, and each type has it's own rules. VIew them all <a href="DSD-documentation.html">here</a>.</p>
+        <p>For now, let's focus on getActionBlock. If we check the above link, we see that there are three required fields of an action block: "range", "user", and "name". Let's go ahead and create the minimal structure for the action that we will return.</p>
+        <div class="code">
+        <pre>
+        ch = c.combatHandler()
+        class hero(c.Character):
+            name = "Limelight"
+            HP = 30
+            groups = ['good']
+        
+            def getActionBlock(self):
+                global ch
+                action = {
+                    'user': self,
+                    'name': "Blaster Shot",
+                    'range': {"character":ch.getRandomCharacterInRange({"group":"bad"})},
+                }
+                pass
+            
+            def getReactionBlock(self, action):
+                pass
+        </pre>
+        </div>
+        <p>You might be confused as to what I did with the "range" field. Notice that, between the previous step and this step, I created a combatHandler object called "ch". The combatHandler stores information about all characters in combat. So, I used the combatHandler member function getRandomCharacterInRange to get a random bad guy, and chose that bad guy as the target of the attack. I relied heavily on rangeBlocks, you can read about them <a href="DSD-documentation.html">here.</a></p>
+        <p>Okay, let's do some damage.</p>
+        <div class="code">
+        <pre>
+        def getActionBlock(self):
+            global ch
+            action = {
+                'user': self,
+                'name': "Blaster Shot",
+                'range': {"character":ch.getRandomCharacterInRange({"group":"bad"})},
+                'damage': {
+                    'energy': 10
+                }
+            }
+            pass
+        </pre>
+        </div>
+        <p>Notice that the DSD allows us to specify any type of damage we'd like. We could have used "wkdmfn" damage, and it would have worked. That is, 'energy' is not a 'special' keyword within OCF.</p>
+        <p>Now, we just return the created action.</p>
+        <div class="code">
+        <pre>
+        def getActionBlock(self):
+            global ch
+            action = {
+                'user': self,
+                'name': "Blaster Shot",
+                'range': {"character":ch.getRandomCharacterInRange({"group":"bad"})},
+                'damage': {
+                    'energy': 10
+                }
+            }
+            return action
+        </pre>
+        </div>
+        <p>Because we are lazy, let's go ahead and implement the minimal getReactionBlock. We can come back later and add a better reaction if we'd like.</p>
+        <div class="code">
+        <pre>
+        def getReactionBlock(self, action):
+            reaction = {'user': self}
+            return reaction
+        </pre>
+        </div>
+        <p>The full code now looks like this:</p>
+        <div class="code">
+        <pre>
+        from opencombatflow import character as c
+
+        ch = c.combatHandler()
+        class hero(c.Character):
+            name = "Limelight"
+            HP = 30
+            groups = ['good']
+        
+            def getActionBlock(self):
+                global ch
+                action = {
+                    'user': self,
+                    'name': "Blaster Shot",
+                    'range': {"character":ch.getRandomCharacterInRange({"group":"bad"})},
+                    'damage': {
+                        'energy': 10
+                    }
+                }
+                return action
+            
+            def getReactionBlock(self, action):
+                reaction = {'user': self}
+                return reaction
+        </pre>
+        </div>
+
+        <h2>Combat</h2>
+        <p>I'm going to go ahead and skip past making the alien character (which is essentially the same way), so we can get to combat.</p>
+        <div class="code">
+        <pre>
+        class alien(c.Character):
+            name = "Alien"
+            HP = 10
+            groups = ['bad']
+        
+            def getActionBlock(self):
+                global ch
+                action = {
+                    'user': self,
+                    'name': "Slime Slap",
+                    'range': {"character":ch.getRandomCharacterInRange({"group":"good"})},
+                    'damage': {
+                        'toxic': 3
+                    }
+                }
+                return action
+            
+            def getReactionBlock(self, action):
+                return {'user': self}
+        </pre>
+        </div>
+
+        <p>Now, at long last, we can implement combat (That's why you're here, right?). Before combat begins, we must add characters to the combat handler.</p>
+        <div class="code">
+        <pre>
+        ch.addCharacter(hero())
+        ch.addCharacter(alien())
+        ch.addCharacter(alien())
+        ch.addCharacter(alien())
+        </pre>
+        </div>
+        <p>In the above lines, we add four Character objects to the combat handler.</p>
+        <p>Now, let's implement the game loop.</p>
+        <div class="code">
+        <pre>
+        while True:
+            ch.turn()
+        </pre>
+        </div>
+        <p>That's ... it? Well, sort of. This is the minimum required setup. If we run it, however, we get this error:</p>
+        <div class="code">
+        <pre>
+            KeyError: "The element None is of type &ltclass 'NoneType'&gt, not of required type &ltclass 'opencombatflow.character.Character'&gt. (Evaluating {'character': None})"
+        </pre>
+        </div>
+        <p>There must be an error in our code, right? Wrong. Well, mostly wrong. What actually happened is that our code played the entire game quickly and invisably, and then ran out of characters to attack. (Which is why it is complaining about recieving a None instead of a Character).</p>
+        <p>Let's enclose the turn() statement in a try/except block. (This isn't good practice, but will work until we implement a proper game-over state)</p>
+        <div class="code">
+        <pre>
+        while True:
+            try:
+                ch.turn()
+            except:
+                print("Game Over.")
+        </pre>
+        </div>
+        <p>Now, when we run it, it looks like this:</p>
+        <div class="code">
+        <pre>
+        Game Over.
+        </pre>
+        </div>
+        <p>That's all, thanks for reading!</p>
+
+        <h2>Display</h2>
+        <p>Just kidding! Let's add some messages to the screen so we can figure out what the heck is happening. A log of everything that occurs in game is stored in the combat handler, in the log block format as defined in the DSD.</p>
+        <div class="code">
+        <pre>
+        while True:
+            try:
+                ch.turn()
+            except:
+                print("Game Over.")
+                break
+            
+            for i in ch.getLog():
+                print(i)
+            ch.flushLog() #This clears the log for next time.
+        </pre>
+        </div>
+        
+        <p>The output now looks like this:</p>
+        <div class="code">
+        <pre>
+        {'messageType': 'startOfTurn', 'character': &lt__main__.hero object at 0x00BF44B0&gt}
+        {'messageType': 'action', 'action': {'user': &lt__main__.hero object at 0x00BF44B0&gt, 'name': 'Blaster Shot', 'range': {'character': &lt__main__.alien object at 0x00BFF6B0&gt}, 'damage': {'energy': 10}}}
+        {'messageType': 'reaction', 'reaction': {'user': &lt__main__.alien object at 0x00BFF6B0&gt}, 'action': {'user': &lt__main__.hero object at 0x00BF44B0&gt, 'name': 'Blaster Shot', 'range': {'character': &lt__main__.alien object at 0x00BFF6B0&gt}, 'damage': {'energy': 10}}}
+        {'messageType': 'attackHit', 'damage': {'damageTaken': 10}, 'action': {'user': &lt__main__.hero object at 0x00BF44B0&gt, 'name': 'Blaster Shot', 'range': {'character':
+        &lt__main__.alien object at 0x00BFF6B0&gt}, 'damage': {'energy': 10}}}
+        {'messageType': 'death', 'character': &lt__main__.alien object at 0x00BFF6B0&gt}
+        {'messageType': 'startOfTurn', 'character': &lt__main__.alien object at 0x00BFF670&gt}
+        {'messageType': 'action', 'action': {'user': &lt__main__.alien object at 0x00BFF670&gt, 'name': 'Slime Slap', 'range': {'character': &lt__main__.hero object at 0x00BF44B0&gt}, 'damage': {'toxic': 3}}}
+        {'messageType': 'reaction', 'reaction': {'user': &lt__main__.hero object at 0x00BF44B0&gt}, 'action': {'user': &lt__main__.alien object at 0x00BFF670&gt, 'name': 'Slime Slap', 'range': {'character': &lt__main__.hero object at 0x00BF44B0&gt}, 'damage': {'toxic': 3}}}
+        {'messageType': 'attackHit', 'damage': {'damageTaken': 3}, 'action': {'user': &lt__main__.alien object at 0x00BFF670&gt, 'name': 'Slime Slap', 'range': {'character': &lt__main__.hero object at 0x00BF44B0&gt}, 'damage': {'toxic': 3}}}
+        {'messageType': 'startOfTurn', 'character': &lt__main__.alien object at 0x00BFFED0&gt}
+        {'messageType': 'action', 'action': {'user': &lt__main__.alien object at 0x00BFFED0&gt, 'name': 'Slime Slap', 'range': {'character': &lt__main__.hero object at 0x00BF44B0&gt}, 'damage': {'toxic': 3}}}
+        {'messageType': 'reaction', 'reaction': {'user': &lt__main__.hero object at 0x00BF44B0&gt}, 'action': {'user': &lt__main__.alien object at 0x00BFFED0&gt, 'name': 'Slime Slap', 'range': {'character': &lt__main__.hero object at 0x00BF44B0&gt}, 'damage': {'toxic': 3}}}
+        {'messageType': 'attackHit', 'damage': {'damageTaken': 3}, 'action': {'user': &lt__main__.alien object at 0x00BFFED0&gt, 'name': 'Slime Slap', 'range': {'character': &lt__main__.hero object at 0x00BF44B0&gt}, 'damage': {'toxic': 3}}}
+        {'messageType': 'startOfTurn', 'character': &lt__main__.hero object at 0x00BF44B0&gt}
+        {'messageType': 'action', 'action': {'user': &lt__main__.hero object at 0x00BF44B0&gt, 'name': 'Blaster Shot', 'range': {'character': &lt__main__.alien object at 0x00BFF670&gt}, 'damage': {'energy': 10}}}
+        {'messageType': 'reaction', 'reaction': {'user': &lt__main__.alien object at 0x00BFF670&gt}, 'action': {'user': &lt__main__.hero object at 0x00BF44B0&gt, 'name': 'Blaster Shot', 'range': {'character': &lt__main__.alien object at 0x00BFF670&gt}, 'damage': {'energy': 10}}}
+        {'messageType': 'attackHit', 'damage': {'damageTaken': 10}, 'action': {'user': &lt__main__.hero object at 0x00BF44B0&gt, 'name': 'Blaster Shot', 'range': {'character':
+        &lt__main__.alien object at 0x00BFF670&gt}, 'damage': {'energy': 10}}}
+        {'messageType': 'death', 'character': &lt__main__.alien object at 0x00BFF670&gt}
+        {'messageType': 'startOfTurn', 'character': &lt__main__.alien object at 0x00BFFED0&gt}
+        {'messageType': 'action', 'action': {'user': &lt__main__.alien object at 0x00BFFED0&gt, 'name': 'Slime Slap', 'range': {'character': &lt__main__.hero object at 0x00BF44B0&gt}, 'damage': {'toxic': 3}}}
+        {'messageType': 'reaction', 'reaction': {'user': &lt__main__.hero object at 0x00BF44B0&gt}, 'action': {'user': &lt__main__.alien object at 0x00BFFED0&gt, 'name': 'Slime Slap', 'range': {'character': &lt__main__.hero object at 0x00BF44B0&gt}, 'damage': {'toxic': 3}}}
+        {'messageType': 'attackHit', 'damage': {'damageTaken': 3}, 'action': {'user': &lt__main__.alien object at 0x00BFFED0&gt, 'name': 'Slime Slap', 'range': {'character': &lt__main__.hero object at 0x00BF44B0&gt}, 'damage': {'toxic': 3}}}
+        {'messageType': 'startOfTurn', 'character': &lt__main__.hero object at 0x00BF44B0&gt}
+        {'messageType': 'action', 'action': {'user': &lt__main__.hero object at 0x00BF44B0&gt, 'name': 'Blaster Shot', 'range': {'character': &lt__main__.alien object at 0x00BFFED0&gt}, 'damage': {'energy': 10}}}
+        {'messageType': 'reaction', 'reaction': {'user': &lt__main__.alien object at 0x00BFFED0&gt}, 'action': {'user': &lt__main__.hero object at 0x00BF44B0&gt, 'name': 'Blaster Shot', 'range': {'character': &lt__main__.alien object at 0x00BFFED0&gt}, 'damage': {'energy': 10}}}
+        {'messageType': 'attackHit', 'damage': {'damageTaken': 10}, 'action': {'user': &lt__main__.hero object at 0x00BF44B0&gt, 'name': 'Blaster Shot', 'range': {'character':
+        &lt__main__.alien object at 0x00BFFED0&gt}, 'damage': {'energy': 10}}}
+        {'messageType': 'death', 'character': &lt__main__.alien object at 0x00BFFED0&gt}
+        Game Over.
+        </pre>
+        </div>
+        <p>Uh...okay. Let's translate this into english in the main game loop.</p>
+        <div class="code">
+        <pre>
+        while True:
+            try:
+                ch.turn()
+            except:
+                print("Game Over.")
+                break
+            
+            for i in ch.getLog():
+                if i['messageType'] == 'startOfTurn':
+                    print(f"{i['character'].name} starts his turn.")
+                elif i['messageType'] == 'death':
+                    print(f"{i['character'].name} dies...")
+                elif i['messageType'] == 'action':
+                    print(f"{i['action']['user'].name} uses {i['action']['name']}")
+                elif i['messageType'] == 'attackHit':
+                    print(f"{i['action']['user'].name}'s {i['action']['name']} hits for {i['damage']['damageTaken']} damage")
+            ch.flushLog()
+        </pre>
+        </div>
+        <p>This outputs the following:</p>
+        <div class="code">
+        <pre>
+        Limelight starts his turn.
+        Limelight uses Blaster Shot
+        Limelight's Blaster Shot hits for 10 damage
+        Alien dies...
+        Alien starts his turn.
+        Alien uses Slime Slap
+        Alien's Slime Slap hits for 3 damage
+        Alien starts his turn.
+        Alien uses Slime Slap
+        Alien's Slime Slap hits for 3 damage
+        Limelight starts his turn.
+        Limelight uses Blaster Shot
+        Limelight's Blaster Shot hits for 10 damage
+        Alien dies...
+        Alien starts his turn.
+        Alien uses Slime Slap
+        Alien's Slime Slap hits for 3 damage
+        Limelight starts his turn.
+        Limelight uses Blaster Shot
+        Limelight's Blaster Shot hits for 10 damage
+        Alien dies...
+        Game Over.
         </pre>
         </div>
     </div>
